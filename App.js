@@ -112,13 +112,23 @@ const App = () => {
 
       {processedImage && (
         <>
-          <Text style={styles.subtitle}>Image Traitée:</Text>
-          <Image 
-            source={{ uri: processedImage }} 
-            style={styles.image}
-            resizeMode="contain"
-            onError={() => Alert.alert('Erreur', 'Impossible de charger l\'image traitée')}
-          />
+          <Text style={styles.subtitle}>Résultat :</Text>
+          <View style={styles.resultContainer}>
+            <Ionicons 
+              name={CONSTANT_RESPONSE.success ? "checkmark-circle" : "close-circle"} 
+              size={24} 
+              color={CONSTANT_RESPONSE.success ? "green" : "red"} 
+            />
+            <Text style={[
+              styles.resultText,
+              CONSTANT_RESPONSE.success ? styles.successText : styles.errorText
+            ]}>
+              {CONSTANT_RESPONSE.message}
+            </Text>
+            <Text style={styles.resultValue}>
+              Valeur calculée : {CONSTANT_RESPONSE.result}
+            </Text>
+          </View>
         </>
       )}
 
@@ -130,6 +140,31 @@ const App = () => {
 };
 
 const styles = StyleSheet.create({
+  
+    resultContainer: {
+      backgroundColor: '#f8f9fa',
+      padding: 15,
+      borderRadius: 8,
+      marginVertical: 10
+    },
+    resultText: {
+      fontSize: 16,
+      marginTop: 5,
+      fontWeight: '500'
+    },
+    successText: {
+      color: '#28a745'
+    },
+    errorText: {
+      color: '#dc3545'
+    },
+    resultValue: {
+      fontSize: 14,
+      color: '#6c757d',
+      marginTop: 5,
+      fontStyle: 'italic'
+    }
+  ,
   container: {
     flex: 1,
     justifyContent: 'center',
