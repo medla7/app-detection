@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, Button, Image, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
+import { Ionicons } from '@expo/vector-icons'; // N'oubliez pas cette importation
 
-const API_URL = "https://54c9-34-106-164-187.ngrok-free.app"; // Remplacez par votre URL Ngrok
+const API_URL = "https://82a7-35-245-85-138.ngrok-free.app"; // Remplacez par votre URL Ngrok
 
 const App = () => {
   const [imageUri, setImageUri] = useState(null);
@@ -22,35 +23,47 @@ const App = () => {
     return true;
   };
 
-  // Prendre une photo
   const takePhoto = async () => {
     const hasPermission = await requestPermissions();
     if (!hasPermission) return;
-
-    let result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setImageUri(result.assets[0].uri);
-      await uploadImage(result.assets[0].uri);
+  
+    try {
+      let result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+  
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        setImageUri(result.assets[0].uri);
+        await uploadImage(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error("Erreur avec la caméra:", error);
+      Alert.alert("Erreur", "Impossible d'accéder à la caméra");
     }
   };
-
-  // Choisir depuis la galerie
+  
   const pickImage = async () => {
     const hasPermission = await requestPermissions();
     if (!hasPermission) return;
-
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setImageUri(result.assets[0].uri);
-      await uploadImage(result.assets[0].uri);
+  
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+  
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        setImageUri(result.assets[0].uri);
+        await uploadImage(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error("Erreur avec la galerie:", error);
+      Alert.alert("Erreur", "Impossible d'accéder à la galerie");
     }
   };
 
@@ -66,14 +79,21 @@ const App = () => {
         name: 'photo.jpg',
         type: 'image/jpeg',
       });
-
+  
       const response = await axios.post(`${API_URL}/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-
-      setProcessedImage(response.data.processed_url);
+  
+      // Use the actual response structure
+      console.log("Full response:", response.data); // Debug log
+      setProcessedImage({
+        success: response.data.success,
+        message: response.data.message,
+        result: response.data.result
+      });
+      
     } catch (error) {
       console.error(error);
       Alert.alert('Erreur', 'Échec du traitement');
@@ -110,27 +130,27 @@ const App = () => {
         />
       )}
 
-      {processedImage && (
-        <>
-          <Text style={styles.subtitle}>Résultat :</Text>
-          <View style={styles.resultContainer}>
-            <Ionicons 
-              name={CONSTANT_RESPONSE.success ? "checkmark-circle" : "close-circle"} 
-              size={24} 
-              color={CONSTANT_RESPONSE.success ? "green" : "red"} 
-            />
-            <Text style={[
-              styles.resultText,
-              CONSTANT_RESPONSE.success ? styles.successText : styles.errorText
-            ]}>
-              {CONSTANT_RESPONSE.message}
-            </Text>
-            <Text style={styles.resultValue}>
-              Valeur calculée : {CONSTANT_RESPONSE.result}
-            </Text>
-          </View>
-        </>
-      )}
+{processedImage && (
+  <>
+    <Text style={styles.subtitle}>Résultat :</Text>
+    <View style={styles.resultContainer}>
+      <Ionicons 
+        name={processedImage.success ? "checkmark-circle" : "close-circle"} 
+        size={24} 
+        color={processedImage.success ? "green" : "red"} 
+      />
+      <Text style={[
+        styles.resultText,
+        processedImage.success ? styles.successText : styles.errorText
+      ]}>
+        {processedImage.message}
+      </Text>
+      <Text style={styles.resultValue}>
+        Valeur calculée : {processedImage.result}
+      </Text>
+    </View>
+  </>
+)}
 
       {!imageUri && !loading && (
         <Text style={styles.placeholderText}>Aucune image sélectionnée</Text>
