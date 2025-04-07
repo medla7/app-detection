@@ -1,232 +1,118 @@
 import React, { useState } from 'react';
-import { View, Text, Button, Image, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, Button, Image, StyleSheet, Alert, ActivityIndicator, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
-import { Ionicons } from '@expo/vector-icons'; // N'oubliez pas cette importation
+import { Ionicons } from '@expo/vector-icons';
 
-const API_URL = "https://82a7-35-245-85-138.ngrok-free.app"; // Remplacez par votre URL Ngrok
+const API_URL = "https://fdc8-34-85-137-113.ngrok-free.app"; // Remplace avec ton URL ngrok
 
-const App = () => {
+export default function App() {
   const [imageUri, setImageUri] = useState(null);
-  const [processedImage, setProcessedImage] = useState(null);
+  const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Demander les permissions
   const requestPermissions = async () => {
     const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
     const { status: galleryStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    
     if (cameraStatus !== 'granted' || galleryStatus !== 'granted') {
-      Alert.alert('Permissions requises', 'Vous devez autoriser l\'accès à la caméra et à la galerie');
+      Alert.alert('Permissions requises', 'Autorise l’accès à la caméra et à la galerie');
       return false;
     }
     return true;
   };
 
-  const takePhoto = async () => {
-    const hasPermission = await requestPermissions();
-    if (!hasPermission) return;
-  
-    try {
-      let result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      });
-  
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        setImageUri(result.assets[0].uri);
-        await uploadImage(result.assets[0].uri);
-      }
-    } catch (error) {
-      console.error("Erreur avec la caméra:", error);
-      Alert.alert("Erreur", "Impossible d'accéder à la caméra");
-    }
-  };
-  
-  const pickImage = async () => {
-    const hasPermission = await requestPermissions();
-    if (!hasPermission) return;
-  
-    try {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      });
-  
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        setImageUri(result.assets[0].uri);
-        await uploadImage(result.assets[0].uri);
-      }
-    } catch (error) {
-      console.error("Erreur avec la galerie:", error);
-      Alert.alert("Erreur", "Impossible d'accéder à la galerie");
+  const handleImage = async (result) => {
+    if (!result.canceled && result.assets?.length > 0) {
+      const uri = result.assets[0].uri;
+      setImageUri(uri);
+      await uploadImage(uri);
     }
   };
 
-  // Envoyer l'image à Flask
+  const takePhoto = async () => {
+    const ok = await requestPermissions();
+    if (!ok) return;
+    const result = await ImagePicker.launchCameraAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 1 });
+    await handleImage(result);
+  };
+
+  const pickImage = async () => {
+    const ok = await requestPermissions();
+    if (!ok) return;
+    const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 1 });
+    await handleImage(result);
+  };
+
   const uploadImage = async (uri) => {
-    setLoading(true);
-    setProcessedImage(null);
-    
     try {
+      setLoading(true);
+      setResults(null);
       const formData = new FormData();
       formData.append('image', {
         uri,
-        name: 'photo.jpg',
         type: 'image/jpeg',
+        name: 'image.jpg',
       });
-  
-      const response = await axios.post(`${API_URL}/upload`, formData, {
+
+      const { data } = await axios.post(`${API_URL}/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+        timeout: 30000,
       });
-  
-      // Use the actual response structure
-      console.log("Full response:", response.data); // Debug log
-      setProcessedImage({
-        success: response.data.success,
-        message: response.data.message,
-        result: response.data.result
+
+      setResults({
+        time: data.processing_time,
+        texts: data.detections.flatMap(d => d.texts.map(t => t.text)),
       });
-      
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Erreur', 'Échec du traitement');
+    } catch (err) {
+      console.log("Erreur:", err);
+      Alert.alert("Erreur", err.response?.data?.error || "Une erreur est survenue");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Traitement d'Images</Text>
-      
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Détection d'Expiration</Text>
+
       <View style={styles.buttonContainer}>
-        <Button 
-          title="Utiliser Camera" 
-          onPress={takePhoto} 
-          color="#6200ee"
-        />
+        <Button title="📷 Caméra" onPress={takePhoto} color="#1976D2" />
         <View style={styles.buttonSpacer} />
-        <Button 
-          title="Choisir Image" 
-          onPress={pickImage} 
-          color="#6200ee"
-        />
+        <Button title="🖼 Galerie" onPress={pickImage} color="#1976D2" />
       </View>
 
-      {loading && <ActivityIndicator size="large" color="#6200ee" style={styles.loader} />}
+      {loading && <ActivityIndicator size="large" color="#1976D2" />}
 
       {imageUri && (
-        <Image 
-          source={{ uri: imageUri }} 
-          style={styles.image} 
-          resizeMode="contain"
-        />
+        <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
       )}
 
-{processedImage && (
-  <>
-    <Text style={styles.subtitle}>Résultat :</Text>
-    <View style={styles.resultContainer}>
-      <Ionicons 
-        name={processedImage.success ? "checkmark-circle" : "close-circle"} 
-        size={24} 
-        color={processedImage.success ? "green" : "red"} 
-      />
-      <Text style={[
-        styles.resultText,
-        processedImage.success ? styles.successText : styles.errorText
-      ]}>
-        {processedImage.message}
-      </Text>
-      <Text style={styles.resultValue}>
-        Valeur calculée : {processedImage.result}
-      </Text>
-    </View>
-  </>
-)}
-
-      {!imageUri && !loading && (
-        <Text style={styles.placeholderText}>Aucune image sélectionnée</Text>
+      {results && (
+        <View style={styles.resultsContainer}>
+          <View style={styles.statusRow}>
+            <Ionicons name="checkmark-circle" size={24} color="#4CAF50" />
+            <Text style={styles.statusText}>Temps: {results.time.toFixed(2)}s</Text>
+          </View>
+          <Text style={styles.sectionTitle}>Texte détecté :</Text>
+          {results.texts.length > 0 ? results.texts.map((text, i) => (
+            <Text key={i}>• {text}</Text>
+          )) : <Text>Aucun texte détecté</Text>}
+        </View>
       )}
-    </View>
+    </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  
-    resultContainer: {
-      backgroundColor: '#f8f9fa',
-      padding: 15,
-      borderRadius: 8,
-      marginVertical: 10
-    },
-    resultText: {
-      fontSize: 16,
-      marginTop: 5,
-      fontWeight: '500'
-    },
-    successText: {
-      color: '#28a745'
-    },
-    errorText: {
-      color: '#dc3545'
-    },
-    resultValue: {
-      fontSize: 14,
-      color: '#6c757d',
-      marginTop: 5,
-      fontStyle: 'italic'
-    }
-  ,
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#f5f5f5',
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 30,
-    color: '#333',
-  },
-  subtitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginTop: 20,
-    color: '#6200ee',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    marginBottom: 30,
-  },
-  buttonSpacer: {
-    width: 15,
-  },
-  image: {
-    width: '100%',
-    height: 300,
-    borderRadius: 8,
-    marginVertical: 10,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  placeholderText: {
-    marginTop: 20,
-    color: '#888',
-    fontStyle: 'italic',
-  },
-  loader: {
-    marginVertical: 20,
-  },
+  container: { padding: 20, backgroundColor: '#fff', flexGrow: 1 },
+  title: { fontSize: 22, fontWeight: 'bold', textAlign: 'center', marginBottom: 20 },
+  buttonContainer: { flexDirection: 'row', justifyContent: 'center', marginBottom: 20 },
+  buttonSpacer: { width: 15 },
+  image: { width: '100%', height: 300, marginBottom: 20, borderRadius: 10 },
+  resultsContainer: { padding: 15, backgroundColor: '#f0f0f0', borderRadius: 10 },
+  statusRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
+  statusText: { marginLeft: 8, fontSize: 16 },
+  sectionTitle: { fontWeight: 'bold', marginBottom: 5 },
 });
-
-export default App;
