@@ -1,48 +1,23 @@
-import React, { useState } from 'react';
-import { View, Image, ActivityIndicator, ScrollView, Alert, Text } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import ImageButton from './src/components/ImageButton';
-import ResultDisplay from './src/components/ResultDisplay';
-import useImageHandler from './src/hooks/useImageHandler';
-import { uploadImage } from './src/services/uploadService';
-import styles from './src/styles/appStyles';
+// AppNavigator.js or App.js
 
-export default function App() {
-  const [imageUri, setImageUri] = useState(null);
-  const [results, setResults] = useState(null);
-  const [loading, setLoading] = useState(false);
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
-  const onPickCallback = async (uri) => {
-    try {
-      setLoading(true);
-      setResults(null);
-      const result = await uploadImage(uri);
-      setResults(result);
-    } catch (err) {
-      Alert.alert("Erreur", err.message || "Une erreur est survenue");
-    } finally {
-      setLoading(false);
-    }
-  };
+import LoginScreen from './screens/LoginScreen';
+import RegisterScreen from './screens/RegisterScreen';
+import HomeScreen from './screens/HomeScreen';
 
-  const { takePhoto, pickImage } = useImageHandler(setImageUri, onPickCallback);
+const Stack = createStackNavigator();
 
+export default function AppNavigator() {
   return (
-    <View style={styles.background}>
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>Détection de date</Text>
-        <View style={styles.buttonContainer}>
-          <ImageButton icon="camera" text="Caméra" onPress={takePhoto} />
-          <ImageButton icon="images" text="Galerie" onPress={pickImage} />
-        </View>
-
-        {loading && <ActivityIndicator size="large" color="#fff" />}
-        
-        {imageUri && (
-          <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
-        )}
-        {results && <ResultDisplay results={results} />}
-      </ScrollView>
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="LoginScreen">
+        <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }}/>
+        <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{ headerShown: false }}/>
+        <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }}/>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }

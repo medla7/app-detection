@@ -4,6 +4,7 @@ export default StyleSheet.create({
   background: {
     flex: 1,
     backgroundColor: '#DDEAFF',
+    
   },
   container: {
     padding: 20,
@@ -29,5 +30,13 @@ export default StyleSheet.create({
     borderRadius: 10,
     borderWidth: 2,
     borderColor: '#6A1B9A',
+  },
+  input: {
+    backgroundColor: '#333',
+    color: '#fff',
+    padding: 10,
+    borderRadius: 8,
+    width: '100%',
+    marginBottom: 15,
   },
 });

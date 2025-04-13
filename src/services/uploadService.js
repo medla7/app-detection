@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://c2ab-34-106-144-221.ngrok-free.app'; // Remplacer par ton lien ngrok
+const API_URL = 'https://3617-35-245-170-136.ngrok-free.app'; // Remplacer par ton lien ngrok
 
 export async function uploadImage(uri) {
   const formData = new FormData();
