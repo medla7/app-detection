@@ -15,25 +15,26 @@ export default function RegisterScreen({ navigation }) {
 
   const handleRegister = async () => {
     try {
-      const response = await fetch("http://your-server-url/register.php", {
+      const response = await fetch("http://192.168.1.17/auth/register.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
       const data = await response.json();
       if (data.success) {
-        navigation.replace("Home");
+        navigation.replace("HomeScreen");
       } else {
         Alert.alert("Erreur", data.message);
       }
     } catch (err) {
       Alert.alert("Erreur", "Impossible de créer un compte");
+      console.log(err);
     }
   };
 
   return (
     <View style={styles.background}>
-      <View style={[styles.container, { paddingTop: 120 }]} >
+      <View style={[styles.container, { paddingTop: 120 }]}>
         <Text style={styles.title}>Créer un compte</Text>
 
         <TextInput
@@ -57,7 +58,11 @@ export default function RegisterScreen({ navigation }) {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.replace("LoginScreen")}>
-          <Text style={{ color: '#6E58F5', marginTop: 15 ,textAlign:'center'}}>Se connecter</Text>
+          <Text
+            style={{ color: "#6E58F5", marginTop: 15, textAlign: "center" }}
+          >
+            Se connecter
+          </Text>
         </TouchableOpacity>
       </View>
     </View>

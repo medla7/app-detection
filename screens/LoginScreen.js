@@ -10,7 +10,7 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('http://your-server-url/login.php', {
+      const response = await fetch('http://192.168.1.17/auth/login.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -47,7 +47,7 @@ export default function LoginScreen() {
           style={styles.input}
         />
 
-        <TouchableOpacity style={customStyles.button} onPress={() => navigation.replace('HomeScreen')}>
+        <TouchableOpacity style={customStyles.button} onPress={handleLogin }>
           <Text style={customStyles.buttonText}>Se connecter</Text>
         </TouchableOpacity>
 

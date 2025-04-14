@@ -13,6 +13,7 @@ import ResultDisplay from "./../src/components/ResultDisplay";
 import useImageHandler from "./../src/hooks/useImageHandler";
 import { uploadImage } from "./../src/services/uploadService";
 import styles from "./../src/styles/appStyles";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen({ navigation }) {
   const [imageUri, setImageUri] = useState(null);
@@ -35,11 +36,11 @@ export default function HomeScreen({ navigation }) {
   const { takePhoto, pickImage } = useImageHandler(setImageUri, onPickCallback);
 
   return (
-    <View style={styles.background}>
+    <SafeAreaView style={styles.background}>
       <ScrollView contentContainerStyle={styles.container}>
       <TouchableOpacity onPress={() => navigation.replace("LoginScreen")}>
           <Text
-            style={{ color: "#6E58F5", textAlign: "right",paddingTop:20, }}
+            style={{ color: "#6E58F5", textAlign: "right", }}
           >
             log out
           </Text>
@@ -62,6 +63,6 @@ export default function HomeScreen({ navigation }) {
         )}
         {results && <ResultDisplay results={results} />}
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
