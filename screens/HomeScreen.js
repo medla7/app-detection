@@ -7,12 +7,13 @@ import {
   Alert,
   Text,
   TouchableOpacity,
+  StyleSheet,
 } from "react-native";
-import ImageButton from "./../src/components/ImageButton";
-import ResultDisplay from "./../src/components/ResultDisplay";
-import useImageHandler from "./../src/hooks/useImageHandler";
-import { uploadImage } from "./../src/services/uploadService";
-import styles from "./../src/styles/appStyles";
+import ImageButton from "./../components/ImageButton";
+import ResultDisplay from "./../components/ResultDisplay";
+import useImageHandler from "./../hooks/useImageHandler";
+import { uploadImage } from "./../services/uploadService";
+import styles from "./../styles/appStyles";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen({ navigation }) {
@@ -38,15 +39,28 @@ export default function HomeScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.background}>
       <ScrollView contentContainerStyle={styles.container}>
-      <TouchableOpacity onPress={() => navigation.replace("LoginScreen")}>
-          <Text
-            style={{ color: "#6E58F5", textAlign: "right", }}
-          >
-            log out
-          </Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>Détection de date</Text>
-        
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 10,
+            paddingHorizontal: 10,
+          }}
+        >
+          <Image
+            source={require("../assets/logo.png")}
+            style={{ width: 70, height: 70, resizeMode: "contain" }}
+          />
+          <TouchableOpacity onPress={() => navigation.replace("LoginScreen")}>
+            <Text style={{ color: "#6E58F5" }}>Log out</Text>
+          </TouchableOpacity>
+        </View>
+
+        <Text style={[styles.title, { textAlign: "center", marginBottom: 20 }]}>
+          Détection de date d'expiration
+        </Text>
+
         <View style={styles.buttonContainer}>
           <ImageButton icon="camera" text="Caméra" onPress={takePhoto} />
           <ImageButton icon="images" text="Galerie" onPress={pickImage} />

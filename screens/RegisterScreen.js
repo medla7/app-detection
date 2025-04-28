@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import styles from "./../src/styles/appStyles";
+import styles from "./../styles/appStyles";
+import { registerUser } from "../services/authService";
 
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -15,14 +16,10 @@ export default function RegisterScreen({ navigation }) {
 
   const handleRegister = async () => {
     try {
-      const response = await fetch("http://192.168.1.17/auth/register.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await response.json();
+      const data = await registerUser(email, password);
+
       if (data.success) {
-        navigation.replace("HomeScreen");
+        Alert.alert("compte crée", "vous devez attendre la validation de l admin");
       } else {
         Alert.alert("Erreur", data.message);
       }
@@ -35,7 +32,7 @@ export default function RegisterScreen({ navigation }) {
   return (
     <View style={styles.background}>
       <View style={[styles.container, { paddingTop: 120 }]}>
-        <Text style={styles.title}>Créer un compte</Text>
+        <Text style={styles.title}>Créer un compte </Text>
 
         <TextInput
           style={styles.input}
