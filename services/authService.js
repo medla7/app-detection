@@ -1,4 +1,4 @@
-const API_URL = "http://192.168.1.18/auth"; // Ton URL locale avec Laragon
+const API_URL = "http://192.168.92.195/auth"; // Ton URL locale avec Laragon
 
 export const loginUser = async (email, password) => {
   const response = await fetch(`${API_URL}/login.php`, {
@@ -46,6 +46,18 @@ export const deleteUser = async (userId) => {
     body: JSON.stringify({ id: userId }),
   });
 
+  const data = await response.json();
+  return data;
+};
+
+export const getExpiredUsers = async () => {
+  const response = await fetch(`${API_URL}/expired_users.php`);
+  const data = await response.json();
+  return data;
+};
+
+export const getValidUsers = async () => {
+  const response = await fetch(`${API_URL}/valid_users.php`);
   const data = await response.json();
   return data;
 };
