@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import styles from "../styles/appStyles";
 import { loginUser } from "../services/authService"; // <-- appel du service
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -24,19 +25,22 @@ export default function LoginScreen({ navigation }) {
     return date1 > currentDate;
   };
 
-
   const handleLogin = async () => {
     try {
       const data = await loginUser(email, password); // <-- appel du service
-
-      if (data.success && data.role == "admin") {
+      if (data.role == "admin") {
         navigation.replace("AdminScreen");
-      } else if (data.success && data.etat === 1 && isAccountActive(data.exp)) {
-        navigation.replace("HomeScreen");
-      } else if (data.success && data.etat === 0) {
-        Alert.alert("Erreur", "attendre que l admin valide voter compte");
-      } else if ( data.success && data.etat === 1 && !isAccountActive(data.exp)) {
-        Alert.alert("Erreur", "vous devez renouveller votre abonnement");
+      } else if (data.success) {
+        if (data.etat === 0) {
+          Alert.alert("Erreur", "attendre que l admin valide voter compte");
+        } else if (data.etat === 1) {
+          if (!isAccountActive(data.exp)) {
+            Alert.alert("Erreur", "vous devez renouveller votre abonnement");
+          } else if (isAccountActive(data.exp)) {
+            await AsyncStorage.setItem("userEmail", email); // <-- Enregistrement
+            navigation.replace("HomeScreen");
+          }
+        }
       } else {
         Alert.alert("Erreur", data.message);
       }

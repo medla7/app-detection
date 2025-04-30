@@ -28,11 +28,11 @@ export const getPendingUsers = async () => {
   return data;
 };
 
-export const validateUser = async (userId ,exp) => {
+export const validateUser = async (userId, exp) => {
   const response = await fetch(`${API_URL}/validate_user.php`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: userId ,exp:exp}),
+    body: JSON.stringify({ id: userId, exp: exp }),
   });
 
   const data = await response.json();
@@ -61,3 +61,18 @@ export const getValidUsers = async () => {
   const data = await response.json();
   return data;
 };
+export const changePassword = async (email, currentPassword, newPassword) => {
+  const response = await fetch(`${API_URL}/change_password.php`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email,
+      currentPassword,
+      newPassword,
+    }),
+  });
+
+  const data = await response.json();
+  return data;
+};
+

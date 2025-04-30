@@ -72,11 +72,29 @@ export default function AdminScreen({ navigation }) {
 
   return (
     <View style={styles.background}>
-      <ScrollView contentContainerStyle={[styles.container, { paddingTop: 80 }]}>
-        <TouchableOpacity onPress={() => navigation.replace("LoginScreen")}>
-          <Text style={{ color: "#6E58F5", textAlign: "right" }}>Log out</Text>
-        </TouchableOpacity>
-
+      <ScrollView
+        contentContainerStyle={[styles.container, { paddingTop: 80 }]}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 10,
+            paddingHorizontal: 10,
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => navigation.replace("ChangePasswordScreen")}
+          >
+            <Text style={{ color: "#6E58F5" }}>changer mot de passe</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.replace("LoginScreen")}>
+            <Text style={{ color: "#6E58F5", textAlign: "right" }}>
+              Log out
+            </Text>
+          </TouchableOpacity>
+        </View>
         <Text style={styles.title}>Comptes en attente</Text>
         {pendingUsers.length === 0 && <Text>Aucun</Text>}
         {pendingUsers.map((user) => (
@@ -89,7 +107,10 @@ export default function AdminScreen({ navigation }) {
               value={expDates[user.id] || ""}
               onChangeText={(t) => setExpDates({ ...expDates, [user.id]: t })}
             />
-            <TouchableOpacity style={custom.button} onPress={() => handleValidate(user.id)}>
+            <TouchableOpacity
+              style={custom.button}
+              onPress={() => handleValidate(user.id)}
+            >
               <Text style={custom.buttonText}>✅ Valider</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -113,7 +134,10 @@ export default function AdminScreen({ navigation }) {
               value={expDates[user.id] || ""}
               onChangeText={(t) => setExpDates({ ...expDates, [user.id]: t })}
             />
-            <TouchableOpacity style={custom.button} onPress={() => handleValidate(user.id)}>
+            <TouchableOpacity
+              style={custom.button}
+              onPress={() => handleValidate(user.id)}
+            >
               <Text style={custom.buttonText}>🔁 Réactiver</Text>
             </TouchableOpacity>
           </View>
