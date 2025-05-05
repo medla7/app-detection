@@ -14,7 +14,7 @@ import {
   getValidUsers,
   validateUser,
   deleteUser,
-} from "../services/authService";
+} from "../services/AuthService";
 import styles from "../styles/appStyles";
 
 export default function AdminScreen({ navigation }) {
@@ -85,7 +85,7 @@ export default function AdminScreen({ navigation }) {
           }}
         >
           <TouchableOpacity
-            onPress={() => navigation.replace("ChangePasswordScreen")}
+            onPress={() => navigation.push("ChangePasswordScreen")}
           >
             <Text style={{ color: "#6E58F5" }}>changer mot de passe</Text>
           </TouchableOpacity>

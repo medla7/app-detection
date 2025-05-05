@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from "react-native";
 import styles from "./../styles/appStyles";
-import { registerUser } from "../services/authService";
+import { registerUser } from "../services/AuthService";
 
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState("");

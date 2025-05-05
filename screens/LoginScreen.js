@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from "react-native";
 import styles from "../styles/appStyles";
-import { loginUser } from "../services/authService"; // <-- appel du service
+import { loginUser } from "../services/AuthService"; // <-- appel du service
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LoginScreen({ navigation }) {
@@ -29,6 +29,7 @@ export default function LoginScreen({ navigation }) {
     try {
       const data = await loginUser(email, password); // <-- appel du service
       if (data.role == "admin") {
+        await AsyncStorage.setItem("userEmail", email); // <-- Enregistrement
         navigation.replace("AdminScreen");
       } else if (data.success) {
         if (data.etat === 0) {

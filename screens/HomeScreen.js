@@ -52,7 +52,7 @@ export default function HomeScreen({ navigation }) {
             source={require("../assets/logo.png")}
             style={{ width: 70, height: 70, resizeMode: "contain" }}
           />
-          <TouchableOpacity onPress={() => navigation.replace("ChangePasswordScreen")}>
+          <TouchableOpacity onPress={() => navigation.push("ChangePasswordScreen")}>
             <Text style={{ color: "#6E58F5" }}>changer mot de passe</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.replace("LoginScreen")}>

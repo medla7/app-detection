@@ -8,9 +8,9 @@ import {
   StyleSheet,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { changePassword } from "../services/authService";
+import { changePassword } from "../services/AuthService";
 
-export default function ChangePasswordScreen() {
+export default function ChangePasswordScreen( {navigation} ) {
   const [email, setEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -65,6 +65,11 @@ export default function ChangePasswordScreen() {
 
       <TouchableOpacity style={styles.button} onPress={handleChangePassword}>
         <Text style={styles.buttonText}>Changer</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+        <Text style={{ color: "#6E58F5", marginTop: 15, textAlign: "center" }}>
+          Retour
+        </Text>
       </TouchableOpacity>
     </View>
   );
