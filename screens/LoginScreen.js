@@ -81,6 +81,13 @@ export default function LoginScreen({ navigation }) {
             Créer un compte
           </Text>
         </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.replace("ForgotPasswordScreen")}>
+          <Text
+            style={{ color: "#6E58F5", textAlign: "center", marginTop: 15 }}
+          >
+            mot de passe oublier
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

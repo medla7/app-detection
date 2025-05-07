@@ -1,4 +1,4 @@
-const API_URL = "http://192.168.1.18/auth"; // Ton URL locale avec Laragon
+const API_URL = "http://192.168.1.18/auth"; 
 
 export const loginUser = async (email, password) => {
   const response = await fetch(`${API_URL}/login.php`, {
@@ -76,13 +76,30 @@ export const changePassword = async (email, currentPassword, newPassword) => {
   return data;
 };
 
-export const requestPasswordReset = async (email) => {
-  const response = await fetch(`${API_URL}/request_reset.php`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email }),
-  });
+export const requestPasswordReset = async (email) => {  
+  const response = await fetch(`${API_URL}/request_reset.php`, {  
+    method: "POST",  
+    headers: { "Content-Type": "application/json" },  
+    body: JSON.stringify({ email }),  
+  });  
 
-  const data = await response.json();
-  return data;
+  const text = await response.text(); // récupère toute la réponse brute  
+  console.log('Réponse brute:', text); // affiche dans la console  
+  try {  
+    const data = JSON.parse(text);  
+    return data;  
+  } catch (e) {  
+    console.error('Erreur JSON:', e);  
+    return { success: false, message: 'Réponse non JSON', raw: text };  
+  }  
+};
+export const resetPassword = async (token, password) => {
+  const response = await fetch(`${API_URL}/reset_password_api.php`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ token, password }),
+  });
+  return await response.json();
 };
