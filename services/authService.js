@@ -11,7 +11,7 @@ export const loginUser = async (email, password) => {
   return data;
 };
 
-export const registerUser = async (email, password) => {
+export const registerRequest = async (email, password) => {
   const response = await fetch(`${API_URL}/register.php`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -21,6 +21,29 @@ export const registerUser = async (email, password) => {
   const data = await response.json();
   return data;
 };
+
+export async function validateRegisterToken(email, password, token) {
+  const response = await fetch(`${API_URL}/validateRegisterToken.php`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, password, token }),
+  });
+
+  const text = await response.text(); // Affiche tout
+  console.log("Réponse texte brute :", text); // Important pour le débogage
+
+  try {
+    const data = JSON.parse(text);
+    return data;
+  } catch (e) {
+    console.error("Erreur de parsing JSON :", e);
+    throw new Error("Réponse invalide du serveur");
+  }
+}
+
+
 
 export const getPendingUsers = async () => {
   const response = await fetch(`${API_URL}/pending_users.php`);

@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from "react-native";
 import styles from "./../styles/appStyles";
-import { registerUser } from "../services/AuthService";
+import { registerRequest } from "../services/AuthService";
 
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -16,15 +16,16 @@ export default function RegisterScreen({ navigation }) {
 
   const handleRegister = async () => {
     try {
-      const data = await registerUser(email, password);
-
+      const data = await registerRequest(email, password);
+      console.log("Réponse complète :", data);
       if (data.success) {
-        Alert.alert("compte crée", "vous devez attendre la validation de l admin");
+        Alert.alert("Vérification", "Un code vous a été envoyé par mail.");
+        navigation.replace("ConfirmRegisterScreen", { email, password });
       } else {
         Alert.alert("Erreur", data.message);
       }
     } catch (err) {
-      Alert.alert("Erreur", "Impossible de créer un compte");
+      Alert.alert("Erreur", "Impossible d’envoyer le code");
       console.log(err);
     }
   };
@@ -32,7 +33,7 @@ export default function RegisterScreen({ navigation }) {
   return (
     <View style={styles.background}>
       <View style={[styles.container, { paddingTop: 120 }]}>
-        <Text style={styles.title}>Créer un compte </Text>
+        <Text style={styles.title}>Créer un compte</Text>
 
         <TextInput
           style={styles.input}
@@ -55,9 +56,7 @@ export default function RegisterScreen({ navigation }) {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.replace("LoginScreen")}>
-          <Text
-            style={{ color: "#6E58F5", marginTop: 15, textAlign: "center" }}
-          >
+          <Text style={{ color: "#6E58F5", marginTop: 15, textAlign: "center" }}>
             Se connecter
           </Text>
         </TouchableOpacity>

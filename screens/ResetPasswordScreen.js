@@ -44,6 +44,7 @@ export default function ResetPasswordScreen({ navigation }) {
           placeholderTextColor="#aaa"  
           value={token}  
           onChangeText={setToken}  
+          keyboardType="numeric"
         />  
         <TextInput  
           style={styles.input}  

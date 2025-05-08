@@ -10,6 +10,7 @@ import ChangePasswordScreen from "../screens/ChangePasswordScreen";
 
 import ResetPasswordScreen from "../screens/ResetPasswordScreen";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
+import ConfirmRegisterScreen from "../screens/ConfirmRegisterScreen";
 
 const Stack = createStackNavigator();
 
@@ -33,6 +34,7 @@ export default function AppNavigator() {
           component={ForgotPasswordScreen}
         />
         <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} />
+        <Stack.Screen name="ConfirmRegisterScreen" component={ConfirmRegisterScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
