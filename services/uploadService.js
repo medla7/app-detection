@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://1a73-35-234-52-87.ngrok-free.app'; // Remplacer par ton lien ngrok
+const API_URL = 'https://6706-34-126-134-136.ngrok-free.app'; // Remplacer si le lien change
 
 export async function uploadImage(uri) {
   const formData = new FormData();
@@ -9,16 +9,30 @@ export async function uploadImage(uri) {
     type: 'image/jpeg',
     name: 'image.jpg',
   });
+console.log("Sending image:", {
+  uri,
+  type: 'image/jpeg',
+  name: 'image.jpg',
+});
 
-  const { data } = await axios.post(`${API_URL}/upload`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-    timeout: 30000,
-  });
+  try {
+    const { data } = await axios.post(`${API_URL}/upload`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      timeout: 30000,
+    });
 
-  return {
-    time: data.processing_time,
-    texts: data.detections.flatMap(d => d.texts.map(t => t.text)),
-  };
+    return {
+      time: data.time,       // <-- correspond à Flask
+      texts: data.texts,     // <-- correspond à Flask
+    };
+  } catch (error) {
+    console.error("Erreur lors de l'envoi de l'image :", error.message);
+    return {
+      time: 0,
+      texts: [],
+      error: error.message,
+    };
+  }
 }

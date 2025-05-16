@@ -23,6 +23,7 @@ export default function RegisterScreen({ navigation }) {
         navigation.replace("ConfirmRegisterScreen", { email, password });
       } else {
         Alert.alert("Erreur", data.message);
+        
       }
     } catch (err) {
       Alert.alert("Erreur", "Impossible d’envoyer le code");

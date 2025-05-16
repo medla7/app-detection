@@ -33,7 +33,7 @@ export default function LoginScreen({ navigation }) {
         navigation.replace("AdminScreen");
       } else if (data.success) {
         if (data.etat === 0) {
-          Alert.alert("Erreur", "attendre que l admin valide voter compte");
+          Alert.alert("Erreur", "attendre que l admin valide votre compte");
         } else if (data.etat === 1) {
           if (!isAccountActive(data.exp)) {
             Alert.alert("Erreur", "vous devez renouveller votre abonnement");

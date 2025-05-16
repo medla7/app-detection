@@ -1,4 +1,4 @@
-const API_URL = "http://192.168.1.18/auth"; 
+const API_URL = "http://192.168.1.13/auth"; 
 
 export const loginUser = async (email, password) => {
   const response = await fetch(`${API_URL}/login.php`, {
